@@ -18,7 +18,8 @@ app.UseSwagger(options =>
 
 app.UseSwaggerUI(options =>
 {
-    options.SwaggerEndpoint("/docs/v1/openapi.json", "My API V1");
+    var url = $"{(!Debugger.IsAttached ? "/codelist" : "")}/docs/v1/openapi.json";
+    options.SwaggerEndpoint(url, "Kodeliste-api v1");
 
     options.RoutePrefix = "docs";
 });
