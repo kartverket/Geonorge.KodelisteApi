@@ -11,15 +11,18 @@ builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-
-
-app.UseSwagger();
-
-app.UseSwaggerUI(swagger =>
+app.UseSwagger(options =>
 {
-    var url = $"{(!Debugger.IsAttached ? "/codelist" : "")}/swagger/v1/swagger.json";
-    swagger.SwaggerEndpoint(url, "Kodeliste-api v1");
+    options.RouteTemplate = "docs/{documentName}/openapi.json";
 });
+
+app.UseSwaggerUI(options =>
+{
+    options.SwaggerEndpoint("/docs/v1/openapi.json", "My API V1");
+
+    options.RoutePrefix = "docs";
+});
+
 
 
 app.UseHttpsRedirection();
@@ -27,10 +30,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-app.UseRouting();
-app.UseEndpoints(endpoints =>
-{
-    endpoints.MapControllers();
-});
 
 app.Run();
