@@ -1,3 +1,5 @@
+using System.Diagnostics;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -12,7 +14,12 @@ var app = builder.Build();
 
 
 app.UseSwagger();
-app.UseSwaggerUI();
+
+app.UseSwaggerUI(swagger =>
+{
+    var url = $"{(!Debugger.IsAttached ? "/codelist" : "")}/swagger/v1/swagger.json";
+    swagger.SwaggerEndpoint(url, "Kodeliste-api v1");
+});
 
 
 app.UseHttpsRedirection();
