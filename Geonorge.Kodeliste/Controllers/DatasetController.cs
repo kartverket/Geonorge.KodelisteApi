@@ -141,7 +141,7 @@ namespace Geonorge.Kodeliste.Controllers
         }
 
         [HttpGet]
-        [Route("codelist/{url}/{format}")]
+        [Route("/{url}/{format}")]
         public IActionResult GetUrlCodelist(string url, string format = "json") 
         {
             HttpResponseMessage response = HttpClient.GetAsync(HttpUtility.UrlDecode(url) + "." + format).Result;
