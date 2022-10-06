@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
+using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using www.opengis.net;
@@ -137,6 +138,58 @@ namespace Geonorge.Kodeliste.Controllers
 
 
             return dataset;
+        }
+
+        [HttpGet]
+        [Route("codelist/{url}/{format}")]
+        public IActionResult GetUrlCodelist(string url, string format = "json") 
+        {
+            HttpResponseMessage response = HttpClient.GetAsync(HttpUtility.UrlDecode(url) + "." + format).Result;
+            response.EnsureSuccessStatusCode();
+
+            string contentType = GetContentType(format);
+
+            return File(response.Content.ReadAsStream(), contentType);
+        }
+
+        private string GetContentType(string extension)
+        {
+            string contentType = "text/plain";
+
+            if (extension == "csv")
+            {
+                contentType = "text/csv";
+            }
+            else if (extension == "gml")
+            {
+                contentType = "application/gml+xml";
+            }
+            else if (extension == "rdf")
+            {
+                contentType = "application/gml+xml";
+            }
+            else if (extension == "rss")
+            {
+                contentType= "application/rss+xml";
+            }
+            else if (extension == "atom")
+            {
+                contentType = "application/atom+xml";
+            }
+            else if (extension == "xml")
+            {
+                contentType = "application/xml";
+            }
+            else if (extension == "skos")
+            {
+                contentType = "application/xml+rdf";
+            }
+            else if (extension == "json")
+            {
+                contentType = "application/json";
+            }
+
+            return contentType;
         }
 
         private void GetCodeList(DatasetVersion datasetVersion, string gmlApplicationSchema)
