@@ -22,6 +22,7 @@ namespace Geonorge.Kodeliste.Controllers
         /// Henter ut en liste over datasett.
         /// </summary>
         /// <returns></returns>
+        [ProducesResponseType(typeof(IEnumerable<Dataset>), StatusCodes.Status200OK)]
         [HttpGet]
         [Route("datasets")]
         public IEnumerable<Dataset> Get()

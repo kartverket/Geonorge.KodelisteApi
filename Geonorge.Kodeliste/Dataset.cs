@@ -5,6 +5,10 @@ namespace Geonorge.Kodeliste
 {
     public class Dataset
     {
+        /// <summary>
+        /// Dataset/metadata tittel
+        /// </summary>
+        /// <example>FKB-Bygning</example>
         [Required]
         public string Title { get; set; }
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
