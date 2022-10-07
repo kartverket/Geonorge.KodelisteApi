@@ -16,10 +16,13 @@ app.UseSwagger(options =>
     options.RouteTemplate = "docs/{documentName}/openapi.json";
 });
 
+app.UseStaticFiles();
+
 app.UseSwaggerUI(options =>
 {
     var url = $"{(!Debugger.IsAttached ? "/codelist" : "")}/docs/v1/openapi.json";
     options.SwaggerEndpoint(url, "Kodeliste-api v1");
+    options.InjectStylesheet("/custom.css");
 
     options.RoutePrefix = "docs";
 });
