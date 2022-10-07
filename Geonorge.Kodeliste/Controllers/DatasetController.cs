@@ -141,55 +141,26 @@ namespace Geonorge.Kodeliste.Controllers
         }
 
         [HttpGet]
-        [Route("url/{url}/{format}")]
-        public IActionResult GetUrlCodelist(string url, string format = "json") 
+        [Produces("application/json", "application/xml", "application/gml+xml", "application/xml+rdf",
+            "application/rss+xml", "application/atom+xml", "text/csv"
+            , Type = typeof(List<string>))]
+        [Route("url/{url}")]
+        public IActionResult GetUrlCodelist(string url) 
         {
-            HttpResponseMessage response = HttpClient.GetAsync(HttpUtility.UrlDecode(url) + "." + format).Result;
+            string mimeType = "application/json";
+            if (Request.Headers["Accept"].Any() && Request.Headers["Accept"] != "*/*")
+                mimeType = Request.Headers["Accept"];
+
+            HttpClient.DefaultRequestHeaders.Remove("Accept");
+            HttpClient.DefaultRequestHeaders.Add("Accept", mimeType);
+
+            url = HttpUtility.UrlDecode(url);
+            //remove fix problem prod
+            url = url.Replace("register.geonorge.no", "register.dev.geonorge.no");
+
+            HttpResponseMessage response = HttpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
-
-            string contentType = GetContentType(format);
-
-            return File(response.Content.ReadAsStream(), contentType);
-        }
-
-        private string GetContentType(string extension)
-        {
-            string contentType = "text/plain";
-
-            if (extension == "csv")
-            {
-                contentType = "text/csv";
-            }
-            else if (extension == "gml")
-            {
-                contentType = "application/gml+xml";
-            }
-            else if (extension == "rdf")
-            {
-                contentType = "application/gml+xml";
-            }
-            else if (extension == "rss")
-            {
-                contentType= "application/rss+xml";
-            }
-            else if (extension == "atom")
-            {
-                contentType = "application/atom+xml";
-            }
-            else if (extension == "xml")
-            {
-                contentType = "application/xml";
-            }
-            else if (extension == "skos")
-            {
-                contentType = "application/xml+rdf";
-            }
-            else if (extension == "json")
-            {
-                contentType = "application/json";
-            }
-
-            return contentType;
+            return Ok(response.Content.ReadAsStream());
         }
 
         private void GetCodeList(DatasetVersion datasetVersion, string gmlApplicationSchema)
