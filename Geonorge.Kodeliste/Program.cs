@@ -16,6 +16,11 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Title = "Kodeliste-API",
         Description = "Henter ut kodelister som benyttes for datasett",
+        Contact = new OpenApiContact
+        {
+            Name = "Geonorge",
+            Url = new Uri("https://www.geonorge.no/aktuelt/om-geonorge/")
+        },
     });
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
