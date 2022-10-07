@@ -1,3 +1,4 @@
-﻿.topbar-wrapper img {
-    content: url('https://www.geonorge.no/globalassets/forside/logo.png');
+﻿.swagger-ui .topbar {
+    display: none;
+    visibility: hidden;
 }
