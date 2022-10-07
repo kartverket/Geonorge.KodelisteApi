@@ -155,8 +155,9 @@ namespace Geonorge.Kodeliste.Controllers
             HttpClient.DefaultRequestHeaders.Add("Accept", mimeType);
 
             url = HttpUtility.UrlDecode(url);
-            //remove fix problem prod
-            url = url.Replace("register.geonorge.no", "register.dev.geonorge.no");
+
+            //remove fix problem prod do not handle accept http header correctly
+            url = url.Replace("https://register.geonorge.no", "http://register.dev.geonorge.no");
 
             HttpResponseMessage response = HttpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
