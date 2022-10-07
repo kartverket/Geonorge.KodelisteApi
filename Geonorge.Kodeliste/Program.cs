@@ -22,7 +22,8 @@ app.UseSwaggerUI(options =>
 {
     var url = $"{(!Debugger.IsAttached ? "/codelist" : "")}/docs/v1/openapi.json";
     options.SwaggerEndpoint(url, "Kodeliste-api v1");
-    options.InjectStylesheet("/custom.css");
+    url = $"{(!Debugger.IsAttached ? "/codelist" : "")}/custom.css";
+    options.InjectStylesheet(url);
 
     options.RoutePrefix = "docs";
 });
