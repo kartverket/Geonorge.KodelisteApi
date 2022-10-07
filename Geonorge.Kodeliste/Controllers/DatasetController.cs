@@ -18,6 +18,10 @@ namespace Geonorge.Kodeliste.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Henter ut en liste over datasett med eksterne kodelister.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("datasets")]
         public IEnumerable<Dataset> Get()
@@ -56,6 +60,10 @@ namespace Geonorge.Kodeliste.Controllers
             return datasetList;
         }
 
+        /// <summary>
+        /// Henter ut ett datasett, de ulike versjonene og url til de eksterne kodelistene.
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Route("dataset/{title}")]
         public Dataset GetDatasetCodeLists(string title)
@@ -140,6 +148,10 @@ namespace Geonorge.Kodeliste.Controllers
             return dataset;
         }
 
+        /// <summary>
+        /// Slår opp kodeliste-url og viser kodeverdiene
+        /// </summary>
+        /// <returns></returns>
         [HttpGet]
         [Produces("application/json", "application/xml", "application/gml+xml", "application/xml+rdf",
             "application/rss+xml", "application/atom+xml", "text/csv"
