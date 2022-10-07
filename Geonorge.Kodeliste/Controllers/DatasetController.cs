@@ -19,7 +19,7 @@ namespace Geonorge.Kodeliste.Controllers
         }
 
         /// <summary>
-        /// Henter ut en liste over datasett med eksterne kodelister.
+        /// Henter ut en liste over datasett.
         /// </summary>
         /// <returns></returns>
         [HttpGet]
