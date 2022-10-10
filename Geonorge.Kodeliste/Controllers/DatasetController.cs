@@ -22,10 +22,10 @@ namespace Geonorge.Kodeliste.Controllers
         /// Henter ut en liste over datasett.
         /// </summary>
         /// <returns></returns>
-        [ProducesResponseType(typeof(IEnumerable<Dataset>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<DatasetSimple>), StatusCodes.Status200OK)]
         [HttpGet]
         [Route("datasets")]
-        public IEnumerable<Dataset> Get()
+        public IEnumerable<DatasetSimple> Get()
         {
             GeoNorgeAPI.GeoNorge _geoNorge = new GeoNorgeAPI.GeoNorge("", "", "http://www.geonorge.no/geonetwork/srv/nor/csw-dataset");
             var filters = new object[]
@@ -45,7 +45,7 @@ namespace Geonorge.Kodeliste.Controllers
                         ItemsChoiceType23.PropertyIsLike,
             };
 
-            List<Dataset> datasetList = new List<Dataset>();
+            List<DatasetSimple> datasetList = new List<DatasetSimple>();
 
             var res = _geoNorge.SearchWithFilters(filters, filterNames, 1, 1000, false);
             for (int s = 0; s < res.Items.Length; s++)
@@ -53,7 +53,7 @@ namespace Geonorge.Kodeliste.Controllers
                 string title = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[2].Text[0];
                 string type = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[3].Text[0];
                 if(type == "dataset")
-                    datasetList.Add(new Dataset { Title = title });
+                    datasetList.Add(new DatasetSimple { Title = title });
             }
 
             datasetList = datasetList.OrderBy(o => o.Title).ToList();
