@@ -1,3 +1,4 @@
+using Kartverket.Register.Models.Api;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
 using System.Web;
@@ -150,13 +151,13 @@ namespace Geonorge.Kodeliste.Controllers
         }
 
         /// <summary>
-        /// Slår opp kodeliste-url og viser kodeverdiene
+        /// SlÃ¥r opp kodeliste-url og viser kodeverdiene
         /// </summary>
         /// <returns></returns>
         [HttpGet]
         [Produces("application/json", "application/xml", "application/gml+xml", "application/xml+rdf",
             "application/rss+xml", "application/atom+xml", "text/csv"
-            , Type = typeof(List<string>))]
+            , Type = typeof(Register))]
         [Route("url/{url}")]
         public IActionResult GetUrlCodelist(string url) 
         {
