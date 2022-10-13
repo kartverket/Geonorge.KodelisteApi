@@ -171,7 +171,7 @@ namespace Geonorge.Kodeliste.Controllers
             url = HttpUtility.UrlDecode(url);
 
             //remove fix problem prod do not handle accept http header correctly
-            url = url.Replace("https://register.geonorge.no", "http://register.dev.geonorge.no");
+            url = url + "." + GetExtensionFromContentType(mimeType);
 
             HttpResponseMessage response = HttpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
@@ -249,5 +249,42 @@ namespace Geonorge.Kodeliste.Controllers
             else if(dataset.CodeLists != null && dataset.CodeLists.Count > 0)
                 dataset.CodeLists = dataset.CodeLists.OrderBy(o => o.Name).ToList();
         }
+
+        private string GetExtensionFromContentType(string contentType)
+        {
+            string extension = "json";
+
+            if (contentType == "text/csv")
+            {
+                extension = "csv";
+            }
+            else if (contentType == "application/gml+xml")
+            {
+                extension = "gml";
+            }
+            else if (contentType == "application/gml+xml")
+            {
+                extension = "rdf";
+            }
+            else if (contentType == "application/rss+xml")
+            {
+                extension = "rss";
+            }
+            else if (contentType == "application/atom+xml")
+            {
+                extension = "atom";
+            }
+            else if (contentType == "application/xml")
+            {
+                extension = "xml";
+            }
+            else if (contentType == "application/xml+rdf")
+            {
+                extension = "skos";
+            }
+
+            return extension;
+        }
+
     }
 }
