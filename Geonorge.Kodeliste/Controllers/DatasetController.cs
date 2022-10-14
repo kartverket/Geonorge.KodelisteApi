@@ -65,7 +65,7 @@ namespace Geonorge.Kodeliste.Controllers
         /// <summary>
         /// Henter ut ett datasett, de ulike versjonene og url til de eksterne kodelistene.
         /// </summary>
-        /// <returns></returns>
+        /// <param name="title">The title of the dataset</param>
         [HttpGet]
         [Route("dataset/{title}")]
         public Dataset GetDatasetCodeLists(string title)
@@ -153,7 +153,7 @@ namespace Geonorge.Kodeliste.Controllers
         /// <summary>
         /// Slår opp kodeliste-url og viser kodeverdiene
         /// </summary>
-        /// <returns></returns>
+        /// <param name="url">The url of the codelist</param>
         [HttpGet]
         [Produces("application/json", "application/xml", "application/gml+xml", "application/xml+rdf",
             "application/rss+xml", "application/atom+xml", "text/csv"
