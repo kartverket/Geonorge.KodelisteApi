@@ -5,6 +5,7 @@ using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using www.opengis.net;
+using Serilog;
 
 namespace Geonorge.Kodeliste.Controllers
 {
@@ -172,7 +173,7 @@ namespace Geonorge.Kodeliste.Controllers
 
             //remove fix problem prod do not handle accept http header correctly
             url = url + "." + GetExtensionFromContentType(mimeType);
-
+            _logger.LogInformation("Get dataset url: " + url);
             HttpResponseMessage response = HttpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
             return Ok(response.Content.ReadAsStream());

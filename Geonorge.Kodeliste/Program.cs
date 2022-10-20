@@ -1,8 +1,19 @@
 using Microsoft.OpenApi.Models;
+using Serilog;
 using System.Diagnostics;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Logging.ClearProviders();
+
+builder.Host.UseSerilog((ctx, lc) => lc
+    .MinimumLevel.Debug()
+    .WriteTo.Console()
+    .WriteTo.File("c:\\inetpub\\logs\\kodelisteApi-.txt", rollingInterval: RollingInterval.Day)
+    );
+
+
 
 // Add services to the container.
 
