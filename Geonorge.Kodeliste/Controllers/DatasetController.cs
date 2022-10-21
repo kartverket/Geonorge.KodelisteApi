@@ -207,6 +207,7 @@ namespace Geonorge.Kodeliste.Controllers
                 var codeList = xappinfo.SelectSingleNode("gml:defaultCodeSpace", nsmgr)?.InnerText;
                 if (codeList != null)
                 {
+                    codeList = FixEncoding(codeList);
                     var name = xappinfo.SelectSingleNode("app:taggedValue", nsmgr)?.InnerText;
                     if (name != null)
                     {
@@ -243,6 +244,7 @@ namespace Geonorge.Kodeliste.Controllers
                 var codeList = xappinfo.SelectSingleNode("gml:defaultCodeSpace", nsmgr)?.InnerText;
                 if (codeList != null)
                 {
+                    codeList = FixEncoding(codeList);
                     var name = xappinfo.SelectSingleNode("app:taggedValue", nsmgr)?.InnerText;
                     if (name != null)
                     {
@@ -257,6 +259,15 @@ namespace Geonorge.Kodeliste.Controllers
                 dataset.CodeLists = null;
             else if(dataset.CodeLists != null && dataset.CodeLists.Count > 0)
                 dataset.CodeLists = dataset.CodeLists.OrderBy(o => o.Name).ToList();
+        }
+
+        private static string FixEncoding(string codeList)
+        {
+            codeList = codeList.Replace("%C3%A6", "æ");
+            codeList = codeList.Replace("%C3%B8", "ø");
+            codeList = codeList.Replace("%c3%a5", "å");
+
+            return codeList;
         }
 
         private string GetExtensionFromContentType(string contentType)
