@@ -170,13 +170,21 @@ namespace Geonorge.Kodeliste.Controllers
             HttpClient.DefaultRequestHeaders.Add("Accept", mimeType);
 
             url = HttpUtility.UrlDecode(url);
-
+            url = FixUrl(url);
             //remove fix problem prod do not handle accept http header correctly
             url = url + "." + GetExtensionFromContentType(mimeType);
             _logger.LogInformation("Get dataset url: " + url);
             HttpResponseMessage response = HttpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
             return Ok(response.Content.ReadAsStream());
+        }
+
+        private string FixUrl(string url)
+        {
+            if (url.EndsWith(".xml"))
+                url = url.Substring(0, url.Length - 4);
+
+            return url;
         }
 
         private void GetCodeList(DatasetVersion datasetVersion, string gmlApplicationSchema)
