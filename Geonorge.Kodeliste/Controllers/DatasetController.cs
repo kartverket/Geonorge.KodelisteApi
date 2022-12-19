@@ -172,7 +172,7 @@ namespace Geonorge.Kodeliste.Controllers
             url = HttpUtility.UrlDecode(url);
             url = FixUrl(url);
             //remove fix problem prod do not handle accept http header correctly
-            url = url + "." + GetExtensionFromContentType(mimeType);
+            //url = url + "." + GetExtensionFromContentType(mimeType);
             _logger.LogInformation("Get dataset url: " + url);
             HttpResponseMessage response = HttpClient.GetAsync(url).Result;
             response.EnsureSuccessStatusCode();
