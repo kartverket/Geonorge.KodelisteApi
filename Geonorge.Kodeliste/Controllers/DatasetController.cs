@@ -156,7 +156,7 @@ namespace Geonorge.Kodeliste.Controllers
         /// </summary>
         /// <param name="url">The url of the codelist</param>
         [HttpGet]
-        [Produces("application/json", "application/xml", "application/gml+xml", "application/xml+rdf",
+        [Produces("application/json", "application/xml", "application/gml+xml", "application/rdf+xml",
             "application/rss+xml", "application/atom+xml", "text/csv"
             , Type = typeof(Register))]
         [Route("url/{url}")]
