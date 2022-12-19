@@ -1,8 +1,11 @@
+using Kartverket.Register.Models.Api;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json.Nodes;
+using System.Web;
 using System.Xml;
 using System.Xml.Linq;
 using www.opengis.net;
+using Serilog;
 
 namespace Geonorge.Kodeliste.Controllers
 {
@@ -17,9 +20,14 @@ namespace Geonorge.Kodeliste.Controllers
             _logger = logger;
         }
 
+        /// <summary>
+        /// Henter ut en liste over datasett.
+        /// </summary>
+        /// <returns></returns>
+        [ProducesResponseType(typeof(IEnumerable<DatasetSimple>), StatusCodes.Status200OK)]
         [HttpGet]
         [Route("datasets")]
-        public IEnumerable<Dataset> Get()
+        public IEnumerable<DatasetSimple> Get()
         {
             GeoNorgeAPI.GeoNorge _geoNorge = new GeoNorgeAPI.GeoNorge("", "", "http://www.geonorge.no/geonetwork/srv/nor/csw-dataset");
             var filters = new object[]
@@ -39,7 +47,7 @@ namespace Geonorge.Kodeliste.Controllers
                         ItemsChoiceType23.PropertyIsLike,
             };
 
-            List<Dataset> datasetList = new List<Dataset>();
+            List<DatasetSimple> datasetList = new List<DatasetSimple>();
 
             var res = _geoNorge.SearchWithFilters(filters, filterNames, 1, 1000, false);
             for (int s = 0; s < res.Items.Length; s++)
@@ -47,7 +55,7 @@ namespace Geonorge.Kodeliste.Controllers
                 string title = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[2].Text[0];
                 string type = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[3].Text[0];
                 if(type == "dataset")
-                    datasetList.Add(new Dataset { Title = title });
+                    datasetList.Add(new DatasetSimple { Title = title });
             }
 
             datasetList = datasetList.OrderBy(o => o.Title).ToList();
@@ -55,6 +63,10 @@ namespace Geonorge.Kodeliste.Controllers
             return datasetList;
         }
 
+        /// <summary>
+        /// Henter ut ett datasett, de ulike versjonene og url til de eksterne kodelistene.
+        /// </summary>
+        /// <param name="title">The title of the dataset</param>
         [HttpGet]
         [Route("dataset/{title}")]
         public Dataset GetDatasetCodeLists(string title)
@@ -139,6 +151,42 @@ namespace Geonorge.Kodeliste.Controllers
             return dataset;
         }
 
+        /// <summary>
+        /// Slår opp kodeliste-url og viser kodeverdiene
+        /// </summary>
+        /// <param name="url">The url of the codelist</param>
+        [HttpGet]
+        [Produces("application/json", "application/xml", "application/gml+xml", "application/rdf+xml",
+            "application/rss+xml", "application/atom+xml", "text/csv"
+            , Type = typeof(Register))]
+        [Route("url/{url}")]
+        public IActionResult GetUrlCodelist(string url) 
+        {
+            string mimeType = "application/json";
+            if (Request.Headers["Accept"].Any() && Request.Headers["Accept"] != "*/*")
+                mimeType = Request.Headers["Accept"];
+
+            HttpClient.DefaultRequestHeaders.Remove("Accept");
+            HttpClient.DefaultRequestHeaders.Add("Accept", mimeType);
+
+            url = HttpUtility.UrlDecode(url);
+            url = FixUrl(url);
+            //remove fix problem prod do not handle accept http header correctly
+            url = url + "." + GetExtensionFromContentType(mimeType);
+            _logger.LogInformation("Get dataset url: " + url);
+            HttpResponseMessage response = HttpClient.GetAsync(url).Result;
+            response.EnsureSuccessStatusCode();
+            return Ok(response.Content.ReadAsStream());
+        }
+
+        private string FixUrl(string url)
+        {
+            if (url.EndsWith(".xml"))
+                url = url.Substring(0, url.Length - 4);
+
+            return url;
+        }
+
         private void GetCodeList(DatasetVersion datasetVersion, string gmlApplicationSchema)
         {
             XmlDocument xmlDoc = new XmlDocument();
@@ -159,6 +207,7 @@ namespace Geonorge.Kodeliste.Controllers
                 var codeList = xappinfo.SelectSingleNode("gml:defaultCodeSpace", nsmgr)?.InnerText;
                 if (codeList != null)
                 {
+                    codeList = FixEncoding(codeList);
                     var name = xappinfo.SelectSingleNode("app:taggedValue", nsmgr)?.InnerText;
                     if (name != null)
                     {
@@ -195,6 +244,7 @@ namespace Geonorge.Kodeliste.Controllers
                 var codeList = xappinfo.SelectSingleNode("gml:defaultCodeSpace", nsmgr)?.InnerText;
                 if (codeList != null)
                 {
+                    codeList = FixEncoding(codeList);
                     var name = xappinfo.SelectSingleNode("app:taggedValue", nsmgr)?.InnerText;
                     if (name != null)
                     {
@@ -210,5 +260,51 @@ namespace Geonorge.Kodeliste.Controllers
             else if(dataset.CodeLists != null && dataset.CodeLists.Count > 0)
                 dataset.CodeLists = dataset.CodeLists.OrderBy(o => o.Name).ToList();
         }
+
+        private static string FixEncoding(string codeList)
+        {
+            codeList = codeList.Replace("%C3%A6", "æ");
+            codeList = codeList.Replace("%C3%B8", "ø");
+            codeList = codeList.Replace("%c3%a5", "å");
+
+            return codeList;
+        }
+
+        private string GetExtensionFromContentType(string contentType)
+        {
+            string extension = "json";
+
+            if (contentType == "text/csv")
+            {
+                extension = "csv";
+            }
+            else if (contentType == "application/gml+xml")
+            {
+                extension = "gml";
+            }
+            else if (contentType == "application/gml+xml")
+            {
+                extension = "rdf";
+            }
+            else if (contentType == "application/rss+xml")
+            {
+                extension = "rss";
+            }
+            else if (contentType == "application/atom+xml")
+            {
+                extension = "atom";
+            }
+            else if (contentType == "application/xml")
+            {
+                extension = "xml";
+            }
+            else if (contentType == "application/xml+rdf")
+            {
+                extension = "skos";
+            }
+
+            return extension;
+        }
+
     }
 }
