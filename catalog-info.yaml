@@ -1,0 +1,56 @@
+# nonk8s
+apiVersion: "backstage.io/v1alpha1"
+kind: "Component"
+metadata:
+  name: "Geonorge.KodelisteApi"
+  tags:
+  - "public"
+spec:
+  type: "service"
+  lifecycle: "production"
+  owner: "datadeling_og_distribusjon"
+  system: "geonorge"
+  providesApis:
+  - "Geonorge.KodelisteApi-api"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Group"
+metadata:
+  name: "security_champion_Geonorge.KodelisteApi"
+  title: "Security Champion Geonorge.KodelisteApi"
+spec:
+  type: "security_champion"
+  parent: "land_security_champions"
+  members:
+  - "dagolav"
+  children:
+  - "resource:Geonorge.KodelisteApi"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "Resource"
+metadata:
+  name: "Geonorge.KodelisteApi"
+  links:
+  - url: "https://github.com/kartverket/Geonorge.KodelisteApi"
+    title: "Geonorge.KodelisteApi på GitHub"
+spec:
+  type: "repo"
+  owner: "security_champion_Geonorge.KodelisteApi"
+  dependencyOf:
+  - "component:Geonorge.KodelisteApi"
+---
+apiVersion: "backstage.io/v1alpha1"
+kind: "API"
+metadata:
+  name: "Geonorge.KodelisteApi-api"
+  tags:
+  - "public"
+spec:
+  type: "openapi"
+  lifecycle: "production"
+  owner: "datadeling_og_distribusjon"
+  definition: |
+    openapi: "3.0.0"
+    info:
+        title: Geonorge.KodelisteApi API
+    paths:
