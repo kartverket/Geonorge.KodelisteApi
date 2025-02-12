@@ -29,7 +29,7 @@ namespace Geonorge.Kodeliste.Controllers
         [Route("datasets")]
         public IEnumerable<DatasetSimple> Get()
         {
-            GeoNorgeAPI.GeoNorge _geoNorge = new GeoNorgeAPI.GeoNorge("", "", "http://www.geonorge.no/geonetwork/srv/nor/csw-dataset");
+            GeoNorgeAPI.GeoNorge _geoNorge = new GeoNorgeAPI.GeoNorge();
             var filters = new object[]
             {
                     new PropertyIsLikeType
