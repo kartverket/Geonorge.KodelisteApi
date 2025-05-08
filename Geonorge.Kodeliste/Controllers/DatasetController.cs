@@ -50,12 +50,15 @@ namespace Geonorge.Kodeliste.Controllers
             List<DatasetSimple> datasetList = new List<DatasetSimple>();
 
             var res = _geoNorge.SearchWithFilters(filters, filterNames, 1, 1000, false);
-            for (int s = 0; s < res.Items.Length; s++)
+            if (res.Items != null)
             {
-                string title = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[2].Text[0];
-                string type = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[3].Text[0];
-                if(type == "dataset")
-                    datasetList.Add(new DatasetSimple { Title = title });
+                for (int s = 0; s < res.Items.Length; s++)
+                {
+                    string title = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[2].Text[0];
+                    string type = ((www.opengis.net.DCMIRecordType)(res.Items[s])).Items[3].Text[0];
+                    if (type == "dataset")
+                        datasetList.Add(new DatasetSimple { Title = title });
+                }
             }
 
             datasetList = datasetList.OrderBy(o => o.Title).ToList();
@@ -102,7 +105,7 @@ namespace Geonorge.Kodeliste.Controllers
                         dataset.Status = status;
 
                         var GMLApplicationSchema = jsonObject["GMLApplicationSchema"]?.ToString();
-                        if (GMLApplicationSchema != null) 
+                        if (GMLApplicationSchema != null)
                         {
                             HttpResponseMessage responseGml = HttpClient.GetAsync(GMLApplicationSchema).Result;
                             responseGml.EnsureSuccessStatusCode();
@@ -113,11 +116,11 @@ namespace Geonorge.Kodeliste.Controllers
 
                         var versions = jsonObject["versions"]?.AsArray();
 
-                        if(versions != null && versions.Count > 0)
+                        if (versions != null && versions.Count > 0)
                             dataset.Versions = new List<DatasetVersion>();
 
-                        if(versions != null) 
-                        { 
+                        if (versions != null)
+                        {
                             foreach (var version in versions)
                             {
                                 versionName = version["versionName"]?.ToString();
@@ -129,7 +132,7 @@ namespace Geonorge.Kodeliste.Controllers
                                 datasetVersion.Status = status;
 
                                 GMLApplicationSchema = version["GMLApplicationSchema"]?.ToString();
-                                if(GMLApplicationSchema != null) 
+                                if (GMLApplicationSchema != null)
                                 {
                                     HttpResponseMessage responseGml = HttpClient.GetAsync(GMLApplicationSchema).Result;
                                     responseGml.EnsureSuccessStatusCode();
@@ -160,7 +163,7 @@ namespace Geonorge.Kodeliste.Controllers
             "application/rss+xml", "application/atom+xml", "text/csv"
             , Type = typeof(Register))]
         [Route("url/{url}")]
-        public IActionResult GetUrlCodelist(string url) 
+        public IActionResult GetUrlCodelist(string url)
         {
             string mimeType = "application/json";
             if (Request.Headers["Accept"].Any() && Request.Headers["Accept"] != "*/*")
@@ -221,7 +224,7 @@ namespace Geonorge.Kodeliste.Controllers
             if (datasetVersion.CodeLists != null && datasetVersion.CodeLists.Count == 0)
                 datasetVersion.CodeLists = null;
             else if (datasetVersion.CodeLists != null)
-            datasetVersion.CodeLists = datasetVersion.CodeLists.OrderBy(o => o.Name).ToList();
+                datasetVersion.CodeLists = datasetVersion.CodeLists.OrderBy(o => o.Name).ToList();
         }
 
         private static void GetCodeList(Dataset dataset, string gmlApplicationSchema)
@@ -257,7 +260,7 @@ namespace Geonorge.Kodeliste.Controllers
             }
             if (dataset.CodeLists != null && dataset.CodeLists.Count == 0)
                 dataset.CodeLists = null;
-            else if(dataset.CodeLists != null && dataset.CodeLists.Count > 0)
+            else if (dataset.CodeLists != null && dataset.CodeLists.Count > 0)
                 dataset.CodeLists = dataset.CodeLists.OrderBy(o => o.Name).ToList();
         }
 
