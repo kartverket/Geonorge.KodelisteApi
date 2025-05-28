@@ -5,6 +5,9 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Access configuration
+var configuration = builder.Configuration;
+
 builder.Logging.ClearProviders();
 
 builder.Host.UseSerilog((ctx, lc) => lc
