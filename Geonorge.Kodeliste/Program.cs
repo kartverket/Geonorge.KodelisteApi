@@ -1,9 +1,12 @@
-using Microsoft.OpenApi.Models;
+using Microsoft.OpenApi;
 using Serilog;
 using System.Diagnostics;
 using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Access configuration
+var configuration = builder.Configuration;
 
 builder.Logging.ClearProviders();
 

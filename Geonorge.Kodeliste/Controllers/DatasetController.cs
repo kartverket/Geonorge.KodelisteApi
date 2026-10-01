@@ -14,10 +14,12 @@ namespace Geonorge.Kodeliste.Controllers
     {
         private readonly ILogger<DatasetController> _logger;
         private static readonly HttpClient HttpClient = new HttpClient();
+        private readonly IConfiguration _configuration;
 
-        public DatasetController(ILogger<DatasetController> logger)
+        public DatasetController(ILogger<DatasetController> logger, IConfiguration configuration)
         {
             _logger = logger;
+            _configuration = configuration;
         }
 
         /// <summary>
@@ -29,7 +31,8 @@ namespace Geonorge.Kodeliste.Controllers
         [Route("datasets")]
         public IEnumerable<DatasetSimple> Get()
         {
-            GeoNorgeAPI.GeoNorge _geoNorge = new GeoNorgeAPI.GeoNorge();
+            var geoNetworkUrl = _configuration.GetValue<string>("GeoNetworkUrl");
+            GeoNorgeAPI.GeoNorge _geoNorge = new GeoNorgeAPI.GeoNorge("","", geoNetworkUrl);
             var filters = new object[]
             {
                     new PropertyIsLikeType
